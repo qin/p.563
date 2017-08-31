@@ -1,0 +1,364 @@
+#********************************************************************
+# ITU-T Draft Recommendation P.563
+# Version 1.0 - 23 March 2004
+#
+# NOTICE
+#
+# The Single Ended Assessment Model P.563 algorithm and the copyright therein
+# is the joint property of Psytechnics Limited, OPTICOM GmbH and SwissQual AG
+# and is protected by UK, US and other patents, either applied for or
+# registered.
+# Permission is granted to use this source code solely for the purpose of
+# evaluation of ITU-T recommendation P.563.
+# Any other use of this software requires a licence, which may be obtained
+# from:
+#
+# OPTICOM GmbH
+# Am Weichselgarten 7, D- 91058 Erlangen, Germany
+# Phone: +49 9131 691 160   Fax: +49 9131 691 325
+# E-mail: info@opticom.de         www.3sqm.com
+#
+# Psytechnics Limited
+# Fraser House, 23 Museum Street, Ipswich, IP1 1HN, UK
+# Phone: +44 1 473 261 800  Fax: +44 1 473 261 880
+# E-mail: info@psytechnics.com    www.psytechnics.com
+#
+# SwissQual AG
+# Gewerbestrasse 2 CH-4528 Zuchwil, Switzerland
+# Phone: +41 32 685 08 30   Fax: +41 32 685 08 31
+# E-mail: sales@swissqual.com     www.swissqual.com
+#
+# Psytechnics, SwissQual or Opticom can provide licences and further
+# information.
+#
+# Authors:
+#      Ludovic Malfait ludovic.malfait@psytechnics.com
+#      Roland Bitto rb@opticom.de
+#      Pero Juric pero.juric@swissqual.com
+#
+#********************************************************************/
+
+!IF "$(CFG)" == ""
+CFG=p563 - Win32 Release
+!ENDIF 
+
+!IF "$(CFG)" != "p563 - Win32 Release"
+!MESSAGE Invalid configuration "$(CFG)" specified.
+!MESSAGE You can specify a configuration when running NMAKE
+!MESSAGE by defining the macro CFG on the command line. For example:
+!MESSAGE 
+!MESSAGE NMAKE /f "p563.mak" CFG="p563 - Win32 Release"
+!MESSAGE 
+!MESSAGE Possible choices for configuration are:
+!MESSAGE 
+!MESSAGE "p563 - Win32 Release" (based on "Win32 (x86) Console Application")
+!MESSAGE 
+!ERROR An invalid configuration is specified.
+!ENDIF 
+
+!IF "$(OS)" == "Windows_NT"
+NULL=
+!ELSE 
+NULL=nul
+!ENDIF 
+
+OUTDIR=.\bin
+INTDIR=.\obj
+# Begin Custom Macros
+OutDir=.\bin
+# End Custom Macros
+
+all : "$(OUTDIR)\p563.exe" "$(OUTDIR)\p563.bsc"
+
+prepare :
+	mkdir .\obj
+	mkdir .\bin
+	
+clean :
+	-@erase "$(INTDIR)\back_noise.obj"
+	-@erase "$(INTDIR)\back_noise.sbr"
+	-@erase "$(INTDIR)\beeprob.obj"
+	-@erase "$(INTDIR)\beeprob.sbr"
+	-@erase "$(INTDIR)\dsp.obj"
+	-@erase "$(INTDIR)\dsp.sbr"
+	-@erase "$(INTDIR)\Enhance.obj"
+	-@erase "$(INTDIR)\Enhance.sbr"
+	-@erase "$(INTDIR)\EvalQual.obj"
+	-@erase "$(INTDIR)\EvalQual.sbr"
+	-@erase "$(INTDIR)\hosm.obj"
+	-@erase "$(INTDIR)\hosm.sbr"
+	-@erase "$(INTDIR)\inter_detect.obj"
+	-@erase "$(INTDIR)\inter_detect.sbr"
+	-@erase "$(INTDIR)\lpc.obj"
+	-@erase "$(INTDIR)\lpc.sbr"
+	-@erase "$(INTDIR)\LpcAnalysis.obj"
+	-@erase "$(INTDIR)\LpcAnalysis.sbr"
+	-@erase "$(INTDIR)\mapping.obj"
+	-@erase "$(INTDIR)\mapping.sbr"
+	-@erase "$(INTDIR)\module1.obj"
+	-@erase "$(INTDIR)\module1.sbr"
+	-@erase "$(INTDIR)\module2.obj"
+	-@erase "$(INTDIR)\module2.sbr"
+	-@erase "$(INTDIR)\module3.obj"
+	-@erase "$(INTDIR)\module3.sbr"
+	-@erase "$(INTDIR)\p563.obj"
+	-@erase "$(INTDIR)\p563.sbr"
+	-@erase "$(INTDIR)\pitch.obj"
+	-@erase "$(INTDIR)\pitch.sbr"
+	-@erase "$(INTDIR)\Quant.obj"
+	-@erase "$(INTDIR)\Quant.sbr"
+	-@erase "$(INTDIR)\SignalsPercept.obj"
+	-@erase "$(INTDIR)\SignalsPercept.sbr"
+	-@erase "$(INTDIR)\SpeechLib.obj"
+	-@erase "$(INTDIR)\SpeechLib.sbr"
+	-@erase "$(INTDIR)\Statistics.obj"
+	-@erase "$(INTDIR)\Statistics.sbr"
+	-@erase "$(INTDIR)\tools.obj"
+	-@erase "$(INTDIR)\tools.sbr"
+	-@erase "$(INTDIR)\tools1.obj"
+	-@erase "$(INTDIR)\tools1.sbr"
+	-@erase "$(INTDIR)\vc60.idb"
+	-@erase "$(INTDIR)\vector_lib.obj"
+	-@erase "$(INTDIR)\vector_lib.sbr"
+	-@erase "$(OUTDIR)\p563.bsc"
+	-@erase "$(OUTDIR)\p563.exe"
+
+"$(OUTDIR)" :
+    if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
+
+"$(INTDIR)" :
+    if not exist "$(INTDIR)/$(NULL)" mkdir "$(INTDIR)"
+
+CPP=cl.exe
+CPP_PROJ=/nologo /ML /Za /W4 /GX /O2 /I ".\include" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+
+.c{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.c{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+RSC=rc.exe
+BSC32=bscmake.exe
+BSC32_FLAGS=/nologo /o"$(OUTDIR)\p563.bsc" 
+BSC32_SBRS= \
+	"$(INTDIR)\back_noise.sbr" \
+	"$(INTDIR)\beeprob.sbr" \
+	"$(INTDIR)\dsp.sbr" \
+	"$(INTDIR)\Enhance.sbr" \
+	"$(INTDIR)\EvalQual.sbr" \
+	"$(INTDIR)\hosm.sbr" \
+	"$(INTDIR)\inter_detect.sbr" \
+	"$(INTDIR)\lpc.sbr" \
+	"$(INTDIR)\LpcAnalysis.sbr" \
+	"$(INTDIR)\mapping.sbr" \
+	"$(INTDIR)\module1.sbr" \
+	"$(INTDIR)\module2.sbr" \
+	"$(INTDIR)\module3.sbr" \
+	"$(INTDIR)\p563.sbr" \
+	"$(INTDIR)\pitch.sbr" \
+	"$(INTDIR)\Quant.sbr" \
+	"$(INTDIR)\SignalsPercept.sbr" \
+	"$(INTDIR)\SpeechLib.sbr" \
+	"$(INTDIR)\Statistics.sbr" \
+	"$(INTDIR)\tools.sbr" \
+	"$(INTDIR)\tools1.sbr" \
+	"$(INTDIR)\vector_lib.sbr"
+
+"$(OUTDIR)\p563.bsc" : "$(OUTDIR)" $(BSC32_SBRS)
+    $(BSC32) @<<
+  $(BSC32_FLAGS) $(BSC32_SBRS)
+<<
+
+LINK32=link.exe
+LINK32_FLAGS=kernel32.lib user32.lib /nologo /subsystem:console /incremental:no /pdb:"$(OUTDIR)\p563.pdb" /machine:I386 /out:"$(OUTDIR)\p563.exe" 
+LINK32_OBJS= \
+	"$(INTDIR)\back_noise.obj" \
+	"$(INTDIR)\beeprob.obj" \
+	"$(INTDIR)\dsp.obj" \
+	"$(INTDIR)\Enhance.obj" \
+	"$(INTDIR)\EvalQual.obj" \
+	"$(INTDIR)\hosm.obj" \
+	"$(INTDIR)\inter_detect.obj" \
+	"$(INTDIR)\lpc.obj" \
+	"$(INTDIR)\LpcAnalysis.obj" \
+	"$(INTDIR)\mapping.obj" \
+	"$(INTDIR)\module1.obj" \
+	"$(INTDIR)\module2.obj" \
+	"$(INTDIR)\module3.obj" \
+	"$(INTDIR)\p563.obj" \
+	"$(INTDIR)\pitch.obj" \
+	"$(INTDIR)\Quant.obj" \
+	"$(INTDIR)\SignalsPercept.obj" \
+	"$(INTDIR)\SpeechLib.obj" \
+	"$(INTDIR)\Statistics.obj" \
+	"$(INTDIR)\tools.obj" \
+	"$(INTDIR)\tools1.obj" \
+	"$(INTDIR)\vector_lib.obj"
+
+"$(OUTDIR)\p563.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
+    $(LINK32) @<<
+  $(LINK32_FLAGS) $(LINK32_OBJS)
+<<
+
+
+!IF "$(CFG)" == "p563 - Win32 Release"
+SOURCE=.\source\back_noise.c
+
+"$(INTDIR)\back_noise.obj"	"$(INTDIR)\back_noise.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\source\beeprob.c
+
+"$(INTDIR)\beeprob.obj"	"$(INTDIR)\beeprob.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\source\dsp.c
+
+"$(INTDIR)\dsp.obj"	"$(INTDIR)\dsp.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\source\Enhance.c
+
+"$(INTDIR)\Enhance.obj"	"$(INTDIR)\Enhance.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\source\EvalQual.c
+
+"$(INTDIR)\EvalQual.obj"	"$(INTDIR)\EvalQual.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\source\hosm.c
+
+"$(INTDIR)\hosm.obj"	"$(INTDIR)\hosm.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\source\inter_detect.c
+
+"$(INTDIR)\inter_detect.obj"	"$(INTDIR)\inter_detect.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\source\lpc.c
+
+"$(INTDIR)\lpc.obj"	"$(INTDIR)\lpc.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\source\LpcAnalysis.c
+
+"$(INTDIR)\LpcAnalysis.obj"	"$(INTDIR)\LpcAnalysis.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\source\mapping.c
+
+"$(INTDIR)\mapping.obj"	"$(INTDIR)\mapping.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\source\module1.c
+
+"$(INTDIR)\module1.obj"	"$(INTDIR)\module1.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\source\module2.c
+
+"$(INTDIR)\module2.obj"	"$(INTDIR)\module2.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\source\module3.c
+
+"$(INTDIR)\module3.obj"	"$(INTDIR)\module3.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\source\p563.c
+
+"$(INTDIR)\p563.obj"	"$(INTDIR)\p563.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\source\pitch.c
+
+"$(INTDIR)\pitch.obj"	"$(INTDIR)\pitch.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\source\Quant.c
+
+"$(INTDIR)\Quant.obj"	"$(INTDIR)\Quant.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\source\SignalsPercept.c
+
+"$(INTDIR)\SignalsPercept.obj"	"$(INTDIR)\SignalsPercept.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\source\SpeechLib.c
+
+"$(INTDIR)\SpeechLib.obj"	"$(INTDIR)\SpeechLib.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\source\Statistics.c
+
+"$(INTDIR)\Statistics.obj"	"$(INTDIR)\Statistics.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\source\tools.c
+
+"$(INTDIR)\tools.obj"	"$(INTDIR)\tools.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\source\tools1.c
+
+"$(INTDIR)\tools1.obj"	"$(INTDIR)\tools1.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\source\vector_lib.c
+
+"$(INTDIR)\vector_lib.obj"	"$(INTDIR)\vector_lib.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+
+!ENDIF 
+
