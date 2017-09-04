@@ -122,6 +122,12 @@ prepare:
 	mkdir -p $(OUTDIR)
 	mkdir -p $(OBJDIR)
 
+install:
+	cp $(OUTDIR)/p563	/usr/local/bin
+
+uninstall:
+	rm -f /usr/local/bin/p563
+
 
 $(OUTDIR)/p563:$(OUTDIR) $(OBJS_P563)
 	@echo Making p563
